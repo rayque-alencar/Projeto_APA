@@ -11,28 +11,28 @@ Instancia::Instancia(const string& nomeArquivo) {
     }
 
     // Lendo os dados da instancia do arquivo
-    arquivo >> num_de_Entregas;
-    arquivo >> num_De_Veiculos;
-    arquivo >> capacidade_Veiculo;
-    arquivo >> min_De_Entregas;
-    arquivo >> custo_Do_Veiculo;
+    arquivo >> nEntregas;
+    arquivo >> nVeiculos;
+    arquivo >> capacidadeVeiculo;
+    arquivo >> minEntregas;
+    arquivo >> custoVeiculo;
 
     // Lendo os dados do arquivo da demanda
-    demadas.resize(num_de_Entregas);                   
-    for (int i = 0; i < num_de_Entregas; i++) {
+    demadas.resize(nEntregas);                   
+    for (int i = 0; i < nEntregas; i++) {
         arquivo >> demadas[i];
     }
 
     // Lendo os dados do arquivo do custo de terceirizacao
-    custos_De_Terceirizacao.resize(num_de_Entregas);
-    for (int i = 0; i < num_de_Entregas; i++) {
-        arquivo >> custos_De_Terceirizacao[i];
+    custosTerceirizacao.resize(nEntregas);
+    for (int i = 0; i < nEntregas; i++) {
+        arquivo >> custosTerceirizacao[i];
     }
 
     // Lendo os dados do arquivo da matriz de custo
-    custo.resize(num_de_Entregas + 1, vector<int>(num_de_Entregas + 1));
-    for (int i = 0; i < num_de_Entregas + 1; i++) {
-        for (int j = 0; j < num_de_Entregas + 1; j++) {
+    custo.resize(nEntregas + 1, vector<int>(nEntregas + 1));
+    for (int i = 0; i < nEntregas + 1; i++) {
+        for (int j = 0; j < nEntregas + 1; j++) {
             arquivo >> custo[i][j];
         }
     }
@@ -43,28 +43,28 @@ Instancia::Instancia(const string& nomeArquivo) {
 
 // Imprimindo os dados da instancia na tela
 void Instancia::imprimirDados() {
-    cout << "n: " << num_de_Entregas << endl;
-    cout << "k: " << num_De_Veiculos << endl;
-    cout << "Q: " << capacidade_Veiculo << endl;
-    cout << "L: " << min_De_Entregas << endl;
-    cout << "r: " << custo_Do_Veiculo << endl;
+    cout << "n: " << nEntregas << endl;
+    cout << "k: " << nVeiculos << endl;
+    cout << "Q: " << capacidadeVeiculo << endl;
+    cout << "L: " << minEntregas << endl;
+    cout << "r: " << custoVeiculo << endl;
     cout << "--------------------------" << endl;
 
     cout << "Array d:";
-    for (int i = 0; i < num_de_Entregas; i++) {
+    for (int i = 0; i < nEntregas; i++) {
         cout << " " << demadas[i];
     }
     cout << "\n--------------------------" << endl;
 
     cout << "Array p:";
-    for (int i = 0; i < num_de_Entregas; i++) {
-        cout << " " << custos_De_Terceirizacao[i];
+    for (int i = 0; i < nEntregas; i++) {
+        cout << " " << custosTerceirizacao[i];
     }
     cout << "\n--------------------------" << endl;
 
     cout << "Matriz c:" << endl;
-    for (int i = 0; i < num_de_Entregas + 1; i++) {
-        for (int j = 0; j < num_de_Entregas + 1; j++) {
+    for (int i = 0; i < nEntregas + 1; i++) {
+        for (int j = 0; j < nEntregas + 1; j++) {
             cout << custo[i][j] << " ";
         }
         cout << endl;

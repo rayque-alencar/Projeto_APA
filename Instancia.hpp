@@ -11,8 +11,8 @@ using namespace std;
 // Classe que representa a instancia do problema
 class Instancia {
     public:
-        int num_de_Entregas, num_De_Veiculos, capacidade_Veiculo, min_De_Entregas, custo_Do_Veiculo; 
-        vector<int> demadas, custos_De_Terceirizacao; 
+        int nEntregas, nVeiculos, capacidadeVeiculo, minEntregas, custoVeiculo; 
+        vector<int> demadas, custosTerceirizacao; 
         vector<vector<int>> custo;
 
         Instancia(const string& nomeArquivo);
