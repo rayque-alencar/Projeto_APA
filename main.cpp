@@ -2,10 +2,15 @@
 
 int main() {
     
-    string nomeArquivo = "/home/rayque/Downloads/projeto de apa/instancias/n9k5_D.txt";
+    string nomeArquivo = "instancias/n22k3_B.txt";
     Instancia instancia(nomeArquivo);
 
-    instancia.imprimirDados();
+    instancia.algoritmoGuloso();
+    //instancia.imprimirRotas();
+
+    //instancia.imprimirDados();
+
+    //printf("%d\n", instancia.custo[0][0]);
 
     return 0;
 }
