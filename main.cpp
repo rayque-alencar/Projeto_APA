@@ -320,7 +320,6 @@ int main() {
     cout << "m_j: " << melhorSwap.m_j << endl;
     cout << "m_custo: " << melhorSwap.m_custo << endl;*/
 
-    string caminhoPasta = "instanciasSolucoes/"; // Caminho da pasta onde os arquivos de saída serão salvos.
     string nomeArquivo = arquivoDeEntrada.substr(arquivoDeEntrada.find_last_of('/') + 1); // Remove o caminho do arquivo de entrada
     string ArquivoSaida = "instanciasSolucoes/" + nomeArquivo.substr(0, nomeArquivo.find_last_of('.')) + "_solucao.txt"; // Remove a extensão do arquivo de entrada e adiciona a extensão .solucao.txt
     ofstream arquivoSaida(ArquivoSaida); // Crie o arquivo de saída.
