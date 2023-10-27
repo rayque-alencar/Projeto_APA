@@ -18,9 +18,9 @@ Instancia::Instancia(const string& nomeArquivo) {
     arquivo >> custoVeiculo;
 
     // Lendo os dados do arquivo da demanda
-    demadas.resize(nEntregas);                   
+    demandas.resize(nEntregas);                   
     for (int i = 0; i < nEntregas; i++) {
-        arquivo >> demadas[i];
+        arquivo >> demandas[i];
     }
 
     // Lendo os dados do arquivo do custo de terceirizacao
@@ -52,7 +52,7 @@ void Instancia::imprimirDados() {
 
     cout << "Array d:";
     for (int i = 0; i < nEntregas; i++) {
-        cout << " " << demadas[i];
+        cout << " " << demandas[i];
     }
     cout << "\n--------------------------" << endl;
 
