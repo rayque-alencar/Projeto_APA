@@ -150,11 +150,11 @@ void imprimirSolucao(Solucao solucao){
 
     for (int i = 0; i < int(solucao.rotas.size()); i++){
         
-        if(solucao.rotas[i][0] != solucao.rotas[i][1]){
+        if(solucao.rotas[i].size() > 2){
 
             cout << "Rota " << i + 1 << ": ";
 
-            for (int j = 0; j < int(solucao.rotas[i].size()); j++){
+            for (int j = 1; j < int(solucao.rotas[i].size())- 1; j++){
                 cout << solucao.rotas[i][j] << " ";
             }
             cout << endl;
