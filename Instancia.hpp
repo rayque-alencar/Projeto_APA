@@ -17,6 +17,7 @@ class Instancia {
 
         Instancia(const string& nomeArquivo);
         void imprimirDados();
+
 };
 
 #endif

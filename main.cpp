@@ -2,7 +2,7 @@
 
 int main() {
     
-    string nomeArquivo = "instancias/n9k5_D.txt";
+    string nomeArquivo = "instancias/n120k7_A.txt";
     Instancia instancia(nomeArquivo);
 
     instancia.imprimirDados();
