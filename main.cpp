@@ -163,15 +163,71 @@ void imprimirSolucao(Solucao solucao){
     cout << endl;
 }
 
+void imprimirSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
+    
+    if (!arquivo) {
+        cerr << "Erro ao abrir o arquivo de saída." << endl;
+        return;
+    }
+
+    arquivo << solucao.custoTotal << endl;
+    arquivo << solucao.custoRotas << endl;
+    arquivo << solucao.custoVeiculo << endl;
+    arquivo << solucao.custoTerceirizacao << endl;
+
+    arquivo << endl;
+
+    for (int i = 0; i < int(solucao.terceirizados.size()); i++) {
+        arquivo << solucao.terceirizados[i] << " ";
+    }
+
+    arquivo << endl;
+
+    int nRotas = 0;
+    for (vector<int> rota : solucao.rotas) {
+        if (rota[0] != rota[1]) {
+            nRotas += 1;
+        }
+    }
+
+    arquivo << endl;
+    arquivo << nRotas << endl;
+
+    for (int i = 0; i < int(solucao.rotas.size()); i++) {
+        if (solucao.rotas[i].size() > 2) {
+            for (int j = 1; j < int(solucao.rotas[i].size())- 1; j++) {
+                arquivo << solucao.rotas[i][j] << " ";
+            }
+            arquivo << endl;
+        }
+    }
+}
+
+
 int main() {
     
-    string nomeArquivo = "instancias/n199k17_D.txt";
-    Instancia instancia(nomeArquivo);
+    string arquivoDeEntrada = "instancias/n9k5_A.txt";
+    Instancia instancia(arquivoDeEntrada);
 
     instancia.imprimirDados();
 
     Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
+    
     imprimirSolucao(solucaoGulosa);
+  
+    string ArquivoSaida = arquivoDeEntrada.substr(0, arquivoDeEntrada.find_last_of('.')) + "_solucao.txt"; // Nome do arquivo de saída.
+    ofstream arquivoSaida(ArquivoSaida); // Crie o arquivo de saída.
+
+    // Verifique se o arquivo foi criado com sucesso.
+    if (!arquivoSaida){
+        cerr << "Erro ao criar o arquivo de saída." << endl;
+        return 1;
+    }
+
+    // Chame a função para imprimir a solução no arquivo.
+    imprimirSolucaoEmArquivo(solucaoGulosa, arquivoSaida);
+    arquivoSaida.close();
+
 
     return 0;
 }
