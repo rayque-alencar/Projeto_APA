@@ -1,6 +1,6 @@
 #include "Instancia.hpp"
 
-void guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntregas, vector<int> demandas, vector<vector<int>> custo, vector<int> custosTerceirizacao){
+void guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntregas,int custoVeiculo, vector<int> demandas, vector<vector<int>> custo, vector<int> custosTerceirizacao){
     vector<vector<int>> rotas(nVeiculos);
     vector<int> terceirizacao;
     vector<int> pesos(nVeiculos, 0);
@@ -25,7 +25,14 @@ void guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntregas
         for(int i = 0 ; i < int(candidatos.size()); i++){
             for (int v = 0; v < nVeiculos; v++)
             {
-                int custoArco = custo[rotas[v].back()][candidatos[i]];
+                int custoArco;
+
+                if (rotas[v].back() == 0)
+                {
+                    custoArco = custo[rotas[v].back()][candidatos[i]]+custoVeiculo;
+                }else{
+                    custoArco = custo[rotas[v].back()][candidatos[i]];
+                }
 
                 if (custoArco < melhorCusto && pesos[v] + demandas[candidatos[i]-1] <= capacidadeVeiculo)
                 {
@@ -80,14 +87,14 @@ void guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntregas
 
 int main() {
     
-    string nomeArquivo = "instancias/n9k5_D.txt";
+    string nomeArquivo = "instancias/arquivo_1.txt";
     Instancia instancia(nomeArquivo);
 
     instancia.imprimirDados();
 
     //instancia.guloso();
 
-    guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
+    guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
 
     return 0;
 }
