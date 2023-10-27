@@ -181,6 +181,9 @@ void imprimirSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
         arquivo << solucao.terceirizados[i] << " ";
     }
 
+
+
+
     arquivo << endl;
 
     int nRotas = 0;
