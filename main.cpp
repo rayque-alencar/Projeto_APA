@@ -1,20 +1,19 @@
 #include "Instancia.hpp"
 #include "Solucao.hpp"
 
-typedef struct
-{
+//struct que guarda o melhor swap
+typedef struct{
     int m_v = 0;
     int m_i = 0;
     int m_j = 0;
     int m_custo = 9999999;
-}t_swap;
+}t_swap; 
 
-//funçãao que calcula o custo das rotas
+//função que calcula o custo das rotas
 int custoRotas(vector<vector<int>> rotas, vector<vector<int>> custo){
     int custoRotas = 0;
     for(vector<int> rota : rotas){
-        for (int i = 0; i < int(rota.size())-1; i++)
-        {
+        for (int i = 0; i < int(rota.size())-1; i++){
             custoRotas += custo[rota[i]][rota[i+1]];
         }
     }
@@ -108,8 +107,6 @@ Solucao guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntre
         //cout << "Retirei: " << candidatos[iMelhorCandidato] << endl;
 
         candidatos.erase(candidatos.begin()+iMelhorCandidato);
-
-   
     }
 
     //adiciona o deposito no final de cada rota
@@ -171,8 +168,9 @@ void imprimirSolucao(Solucao solucao){
     cout << endl;
 }
 
-void imprimirSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
-    
+//função que salva a solução do guloso em arquivo em um arquivo
+void salvarSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
+
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo de saída." << endl;
         return;
@@ -188,9 +186,6 @@ void imprimirSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
     for (int i = 0; i < int(solucao.terceirizados.size()); i++) {
         arquivo << solucao.terceirizados[i] << " ";
     }
-
-
-
 
     arquivo << endl;
 
@@ -215,23 +210,28 @@ void imprimirSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
 }
 
 t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos, int nEntregas){
+    
+    //m_v = melhor veiculo
+    //m_i = index de entrega para se realizada o swap (i ----Swap---> para j)
+    //m_j = index com qual se realiza o swap
+    //m_custo = melhor custo
+    //custo = custo do swap atual (negativo acontece uma melhora no custo), (positivo acontece uma piora no custo), (0 não acontece nada no custo)
+
     int m_v = 0, m_i = 0, m_j = 0, m_custo = 9999999, custo;
 
     t_swap melhorSwap;
 
-    for (int v = 0; v < int(rotas.size()); v++)
-    {
+    for (int v = 0; v < int(rotas.size()); v++){
+        
         //cout << "v: " << v << endl;
         vector<int> rota = rotas[v];
         int tam_rota = int(rota.size());
+
         if(tam_rota > 3){
-            for (int i = 1; i < tam_rota-2; i++)
-            {
-                for (int j = i+1; j < tam_rota-1 ; j++)
-                {
+            for (int i = 1; i < tam_rota-2; i++){
+                for (int j = i+1; j < tam_rota-1 ; j++){
                     //cout << "Tentativas de SWAP entre: " << rota[i] << " e " << rota[j] << endl;
-                    if (i == j-1)
-                    {
+                    if (i == j-1){
                         custo = custos[rota[i-1]][rota[j]] + custos[rota[j]][rota[i]] + custos[rota[i]][rota[j+1]] - custos[rota[i-1]][rota[i]] - custos[rota[i]][rota[j]] - custos[rota[j]][rota[j+1]];
                     }else{
                         custo = custos[rota[i-1]][rota[j]] + custos[rota[j]][rota[i+1]] + custos[rota[j-1]][rota[i]] + custos[rota[i]][rota[j+1]] - custos[rota[i-1]][rota[i]] - custos[rota[i]][rota[i+1]] - custos[rota[j-1]][rota[j]] - custos[rota[j]][rota[j+1]];
@@ -267,14 +267,12 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
     int k = 1;
     Solucao solucaoVizinha = solucaoAtual;
     t_swap melhorSwap;
-    while (k <= nVizinhancas)
-    {
-        switch (k)
-        {
-        case 1:
+
+    while (k <= nVizinhancas){
+        switch (k){
+        case 1: //Vizinhaça 1: Swap Intra Rota
             melhorSwap = melhorSwapIntraRota(solucaoVizinha.rotas, custos, nEntregas);
-            if (melhorSwap.m_custo < 0)
-            {
+            if (melhorSwap.m_custo < 0){
                 int aux = solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i];
                 solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i] = solucaoAtual.rotas[melhorSwap.m_v][melhorSwap.m_j];
                 solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_j] = aux;
@@ -284,20 +282,21 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }else{
                 k++;
             }
-            
+
             break;
-        
+
         default:
+
             break;
+
         }
-        
     }
     return solucaoVizinha;
 }
 
 int main() {
     
-    string arquivoDeEntrada = "instancias/n199k17_B.txt";
+    string arquivoDeEntrada = "instancias/arquivo_1.txt";
     Instancia instancia(arquivoDeEntrada);
 
     //instancia.imprimirDados();
@@ -321,12 +320,9 @@ int main() {
     cout << "m_j: " << melhorSwap.m_j << endl;
     cout << "m_custo: " << melhorSwap.m_custo << endl;*/
 
-
-
-
-
-  
-    string ArquivoSaida = arquivoDeEntrada.substr(0, arquivoDeEntrada.find_last_of('.')) + "_solucao.txt"; // Nome do arquivo de saída.
+    string caminhoPasta = "instanciasSolucoes/"; // Caminho da pasta onde os arquivos de saída serão salvos.
+    string nomeArquivo = arquivoDeEntrada.substr(arquivoDeEntrada.find_last_of('/') + 1); // Remove o caminho do arquivo de entrada
+    string ArquivoSaida = "instanciasSolucoes/" + nomeArquivo.substr(0, nomeArquivo.find_last_of('.')) + "_solucao.txt"; // Remove a extensão do arquivo de entrada e adiciona a extensão .solucao.txt
     ofstream arquivoSaida(ArquivoSaida); // Crie o arquivo de saída.
 
     // Verifique se o arquivo foi criado com sucesso.
@@ -335,10 +331,8 @@ int main() {
         return 1;
     }
 
-    // Chame a função para imprimir a solução no arquivo.
-    imprimirSolucaoEmArquivo(solucaoGulosa, arquivoSaida);
+    salvarSolucaoEmArquivo(solucaoGulosa, arquivoSaida);
     arquivoSaida.close();
-
 
     return 0;
 }
