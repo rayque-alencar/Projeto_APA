@@ -14,6 +14,7 @@ typedef struct
     int m_v_a = 0; // indice do primeiro veiculo
     int m_v_b = 0; // indice do segundo veiculo
     int m_i = 0;   // indice do cara a ser trocado do veiculo A para o veiculo B
+    int m_j = 0;   // indice do cara a ser trocado do veiculo B para o veiculo A
     int m_custo = 9999999; // custo da troca
 }x_swap; 
 
@@ -296,7 +297,7 @@ t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos
 }
 
 x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, int capacidadeVeiculo, int custoVeiculo){
-    int m_v_a = 0, m_v_b = 0, m_i = 0, m_custo = 9999999, custo;
+    int m_v_a = 0, m_v_b = 0, m_i = 0,m_j = 0, m_custo = 9999999, custo;
 
     x_swap melhorSwap;
 
@@ -311,8 +312,11 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
                 int tam_rota_b = int(rota_b.size());
                 for (int i = 1; i < tam_rota_a-1; i++){
                     for (int j = 1; j < tam_rota_b-1; j++){
+                        cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
+                        cout << "------------------------------------------" << endl;
                         // ver se a troca respeita a capacidade das rotas
                         if (capacidadeDasRotas[v_a] - demandas[rota_a[i] - 1] + demandas[rota_b[j] - 1] <= capacidadeVeiculo && capacidadeDasRotas[v_b] - demandas[rota_b[j] - 1] + demandas[rota_a[i] - 1] <= capacidadeVeiculo){
+                            cout << "---------------dentro do if---------------------------" << endl;
                             cout << "Demanda do cara a ser trocado: " << demandas[rota_a[i] - 1] << endl;
                             cout << "Demanda do cara que vai entrar: " << demandas[rota_b[j] - 1] << endl;
                             cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
@@ -324,12 +328,15 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
                                 m_v_a = v_a;
                                 m_v_b = v_b;
                                 m_i = i;
+                                m_j = j;
                                 m_custo = custo;
                                 cout << "custo: " << custo << endl;
                                 cout << "m_v_a: " << m_v_a << endl;
                                 cout << "m_v_b: " << m_v_b << endl;
                                 cout << "m_i: " << m_i << endl;
                                 cout << "m_custo: " << m_custo << endl;
+                                cout << "Swap é entre: " << rotas[m_v_a][m_i] << " e " << rotas[m_v_b][m_j] << endl;
+                                cout << "------------------------------------------" << endl;
                             }
                         }
                     }
@@ -341,6 +348,7 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
     melhorSwap.m_v_a = m_v_a;
     melhorSwap.m_v_b = m_v_b;
     melhorSwap.m_i = m_i;
+    melhorSwap.m_j = m_j;
     melhorSwap.m_custo = m_custo;
 
     return melhorSwap;
@@ -445,7 +453,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
 
 int main() {
        
-    string arquivoDeEntrada = "instancias/arquivo_1.txt";
+    string arquivoDeEntrada = "instancias/n9k5_A.txt";
     Instancia instancia(arquivoDeEntrada);
 
     //instancia.imprimirDados();
