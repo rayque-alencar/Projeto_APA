@@ -11,6 +11,14 @@ typedef struct
 
 typedef struct
 {
+    int m_v_a = 0; // indice do primeiro veiculo
+    int m_v_b = 0; // indice do segundo veiculo
+    int m_i = 0;   // indice do cara a ser trocado do veiculo A para o veiculo B
+    int m_custo = 9999999; // custo da troca
+}x_swap; 
+
+typedef struct
+{
     int m_v = 0; // indice do melhor carro
     int m_i = 0; // indice do primeiro cara para trocar
     int m_ter = 0; // indice do terceirizado
@@ -220,6 +228,17 @@ void salvarSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
     }
 }
 
+vector<int> calculaCapacidadeRota(vector<int> demandas, vector<vector<int>> rotas){
+    vector<int> capacidadeRota(rotas.size(), 0);
+    for (int i = 0; i < int(rotas.size()); i++){
+        for (int j = 0; j < int(rotas[i].size()); j++){
+            capacidadeRota[i] += demandas[rotas[i][j]-1];
+        }
+        cout << "capacidadeRota: " << capacidadeRota[i] << endl;
+    }
+    return capacidadeRota;
+}
+
 t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos, int nEntregas){
     
     //m_v = melhor veiculo
@@ -274,16 +293,63 @@ t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos
     return melhorSwap;
 }
 
-vector<int> calculaCapacidadeRota(vector<int> demandas, vector<vector<int>> rotas){
-    vector<int> capacidadeRota(rotas.size(), 0);
-    for (int i = 0; i < int(rotas.size()); i++){
-        for (int j = 0; j < int(rotas[i].size()); j++){
-            capacidadeRota[i] += demandas[rotas[i][j]-1];
-        }
-        cout << "capacidadeRota: " << capacidadeRota[i] << endl;
+x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, int capacidadeVeiculo, int custoVeiculo){
+    int m_v_a = 0, m_v_b = 0, m_i = 0, m_custo = 9999999, custo;
+
+    x_swap melhorSwap;
+
+    vector<int> capacidadeDasRotas = calculaCapacidadeRota(demandas, rotas);
+
+    for (int v_a = 0; v_a < int(rotas.size()); v_a++){
+        for (int v_b = 0; v_b < int(rotas.size()); v_b++){
+            if (v_a != v_b){
+                vector<int> rota_a = rotas[v_a];
+                vector<int> rota_b = rotas[v_b];
+                int tam_rota_a = int(rota_a.size());
+                int tam_rota_b = int(rota_b.size());
+                for (int i = 1; i < tam_rota_a-1; i++){
+                    for (int j = 1; j < tam_rota_b-1; j++){
+                        // ver se a troca respeita a capacidade das rotas
+                        if (capacidadeDasRotas[v_a] - demandas[rota_a[i] - 1] + demandas[rota_b[j] - 1] <= capacidadeVeiculo && capacidadeDasRotas[v_b] - demandas[rota_b[j] - 1] + demandas[rota_a[i] - 1] <= capacidadeVeiculo){
+                            cout << "Demanda do cara a ser trocado: " << demandas[rota_a[i] - 1] << endl;
+                            cout << "Demanda do cara que vai entrar: " << demandas[rota_b[j] - 1] << endl;
+                            cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
+                            
+                            // CUSTO NÂO TÁ FUNCIONANDO
+                            custo = custos[rota_a[i-1]][rota_b[j]] + custos[rota_b[j]][rota_a[i+1]] + custos[rota_b[j-1]][rota_a[i]] + custos[rota_a[i]][rota_b[j+1]] - custos[rota_a[i-1]][rota_a[i]] - custos[rota_a[i]][rota_a[i+1]] - custos[rota_b[j-1]][rota_b[j]] - custos[rota_b[j]][rota_b[j+1]];
+
+                            if(custo < m_custo){
+                                m_v_a = v_a;
+                                m_v_b = v_b;
+                                m_i = i;
+                                m_custo = custo;
+                                cout << "custo: " << custo << endl;
+                                cout << "m_v_a: " << m_v_a << endl;
+                                cout << "m_v_b: " << m_v_b << endl;
+                                cout << "m_i: " << m_i << endl;
+                                cout << "m_custo: " << m_custo << endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }  
     }
-    return capacidadeRota;
+
+    melhorSwap.m_v_a = m_v_a;
+    melhorSwap.m_v_b = m_v_b;
+    melhorSwap.m_i = m_i;
+    melhorSwap.m_custo = m_custo;
+
+    return melhorSwap;
 }
+
+
+
+
+
+
+
 
 t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int nEntregas, int custoVeiculo){
     int m_v = 0, m_i = 0, m_ter = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999, custo_rotas, custo_ter;
@@ -341,6 +407,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
     int k = 1;
     Solucao solucaoVizinha = solucaoAtual;
     t_swap melhorSwap;
+    x_swap melhorSwapEntreRotas;
 
     while (k <= nVizinhancas){
         switch (k){
@@ -358,6 +425,19 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
 
             break;
+        // case 2:
+        //     //melhorSwapEntreRotas = melhorSwapEntreRotas(solucaoVizinha.rotas, custos, solucaoVizinha.demandas, solucaoVizinha.capacidadeVeiculo, solucaoVizinha.custoVeiculo);
+        //     if (melhorSwapEntreRotas.m_custo < 0){
+        //         // int aux = solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_a][melhorSwapEntreRotas.m_i];
+        //         // solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_a][melhorSwapEntreRotas.m_i] = solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_b][melhorSwapEntreRotas.m_j];
+        //         // solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_b][melhorSwapEntreRotas.m_j] = aux;
+        //         // solucaoVizinha.custoRotas += melhorSwapEntreRotas.m_custo;
+        //         // solucaoVizinha.custoTotal += melhorSwapEntreRotas.m_custo;
+        //         // k = 1;
+        //     }else{
+        //         k++;
+        //     }
+        //     break;
         default:
 
             break;
@@ -369,10 +449,6 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
 
 int main() {
     
-<<<<<<< HEAD
-    string nomeArquivo = "instancias/n120k7_A.txt";
-    Instancia instancia(nomeArquivo);
-=======
     string arquivoDeEntrada = "instancias/arquivo_1.txt";
     Instancia instancia(arquivoDeEntrada);
 
@@ -386,19 +462,29 @@ int main() {
 
     t_terceirizado melhorInsert;
 
-    melhorInsert = melhorInsertTerceirizado(solucaoGulosa.rotas, instancia.custo, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.nEntregas, instancia.custoVeiculo);
+    x_swap melhorSwap;
+
+    melhorSwap = melhorSwapEntreRotas(solucaoGulosa.rotas, instancia.custo, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo);
 
     cout << "######################################" << endl;
-    cout << "m_v: " << melhorInsert.m_v << endl;
-    cout << "m_i: " << melhorInsert.m_i << endl;
-    cout << "m_ter: " << melhorInsert.m_ter << endl;
-    cout << "m_custo_rotas: " << melhorInsert.m_custo_rotas << endl;
-    cout << "m_custo_ter: " << melhorInsert.m_custo_ter << endl;
+    cout << "m_v_a: " << melhorSwap.m_v_a << endl;
+    cout << "m_v_b: " << melhorSwap.m_v_b << endl;
+    cout << "m_i: " << melhorSwap.m_i << endl;
+    cout << "m_custo: " << melhorSwap.m_custo << endl;
+
+    // melhorInsert = melhorInsertTerceirizado(solucaoGulosa.rotas, instancia.custo, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.nEntregas, instancia.custoVeiculo);
+
+    // cout << "######################################" << endl;
+    // cout << "m_v: " << melhorInsert.m_v << endl;
+    // cout << "m_i: " << melhorInsert.m_i << endl;
+    // cout << "m_ter: " << melhorInsert.m_ter << endl;
+    // cout << "m_custo_rotas: " << melhorInsert.m_custo_rotas << endl;
+    // cout << "m_custo_ter: " << melhorInsert.m_custo_ter << endl;
 
     //Solucao solucaoVizinha = VND(solucaoGulosa, 1, instancia.custo, instancia.nEntregas);
     
 
-    //imprimirSolucao(solucaoVizinha);
+    imprimirSolucao(solucaoGulosa);
 
     /*t_swap melhorSwap;
     cout << "######################################" << endl;
@@ -418,7 +504,6 @@ int main() {
         cerr << "Erro ao criar o arquivo de saída." << endl;
         return 1;
     }
->>>>>>> main
 
     salvarSolucaoEmArquivo(solucaoGulosa, arquivoSaida);
     arquivoSaida.close();
