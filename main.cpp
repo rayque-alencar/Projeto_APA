@@ -228,6 +228,7 @@ void salvarSolucaoEmArquivo(const Solucao& solucao, std::ofstream& arquivo) {
     }
 }
 
+//função que calcula a capacidade de cada rota
 vector<int> calculaCapacidadeRota(vector<int> demandas, vector<vector<int>> rotas){
     vector<int> capacidadeRota(rotas.size(), 0);
     for (int i = 0; i < int(rotas.size()); i++){
@@ -239,6 +240,7 @@ vector<int> calculaCapacidadeRota(vector<int> demandas, vector<vector<int>> rota
     return capacidadeRota;
 }
 
+//função que calcula o melhor swap intra rota
 t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos, int nEntregas){
     
     //m_v = melhor veiculo
@@ -344,13 +346,7 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
     return melhorSwap;
 }
 
-
-
-
-
-
-
-
+//função que calcula o melhor insert de um terceirizado em uma rotas
 t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int nEntregas, int custoVeiculo){
     int m_v = 0, m_i = 0, m_ter = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999, custo_rotas, custo_ter;
 
@@ -402,7 +398,6 @@ t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector
 
 }
 
-
 Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, int nEntregas){
     int k = 1;
     Solucao solucaoVizinha = solucaoAtual;
@@ -447,8 +442,9 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
     return solucaoVizinha;
 }
 
+
 int main() {
-    
+       
     string arquivoDeEntrada = "instancias/arquivo_1.txt";
     Instancia instancia(arquivoDeEntrada);
 
