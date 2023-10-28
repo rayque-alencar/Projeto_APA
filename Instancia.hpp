@@ -12,7 +12,7 @@ using namespace std;
 class Instancia {
     public:
         int nEntregas, nVeiculos, capacidadeVeiculo, minEntregas, custoVeiculo; 
-        vector<int> demadas, custosTerceirizacao; 
+        vector<int> demandas, custosTerceirizacao; 
         vector<vector<int>> custo;
 
         Instancia(const string& nomeArquivo);

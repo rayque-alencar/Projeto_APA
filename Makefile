@@ -1,8 +1,8 @@
 # Variáveis
 CXX = g++
 CXXFLAGS = -Wall -O2
-CPPFILES = main.cpp Instancia.cpp
-HPPFILES = Instancia.hpp
+CPPFILES = main.cpp Instancia.cpp Solucao.cpp
+HPPFILES = Instancia.hpp Solucao.hpp
 TARGET = programa
 
 # Regras
