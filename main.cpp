@@ -296,15 +296,16 @@ t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos
     return melhorSwap;
 }
 
-x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, int capacidadeVeiculo, int custoVeiculo){
+x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, int capacidadeVeiculo){
     int m_v_a = 0, m_v_b = 0, m_i = 0,m_j = 0, m_custo = 9999999, custo;
 
+    cout << "Entrou no swap entre rotas" << endl;
     x_swap melhorSwap;
 
     vector<int> capacidadeDasRotas = calculaCapacidadeRota(demandas, rotas);
 
     for (int v_a = 0; v_a < int(rotas.size()); v_a++){
-        for (int v_b = 0; v_b < int(rotas.size()); v_b++){
+        for (int v_b = v_a + 1; v_b < int(rotas.size()); v_b++){
             if (v_a != v_b){
                 vector<int> rota_a = rotas[v_a];
                 vector<int> rota_b = rotas[v_b];
@@ -312,16 +313,15 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
                 int tam_rota_b = int(rota_b.size());
                 for (int i = 1; i < tam_rota_a-1; i++){
                     for (int j = 1; j < tam_rota_b-1; j++){
-                        cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
-                        cout << "------------------------------------------" << endl;
+                        // cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
+                        // cout << "------------------------------------------" << endl;
                         // ver se a troca respeita a capacidade das rotas
                         if (capacidadeDasRotas[v_a] - demandas[rota_a[i] - 1] + demandas[rota_b[j] - 1] <= capacidadeVeiculo && capacidadeDasRotas[v_b] - demandas[rota_b[j] - 1] + demandas[rota_a[i] - 1] <= capacidadeVeiculo){
-                            cout << "---------------dentro do if---------------------------" << endl;
-                            cout << "Demanda do cara a ser trocado: " << demandas[rota_a[i] - 1] << endl;
-                            cout << "Demanda do cara que vai entrar: " << demandas[rota_b[j] - 1] << endl;
-                            cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
-                            
-                            // CUSTO NÂO TÁ FUNCIONANDO
+                            // cout << "---------------dentro do if---------------------------" << endl;
+                            // cout << "Demanda do cara a ser trocado: " << demandas[rota_a[i] - 1] << endl;
+                            // cout << "Demanda do cara que vai entrar: " << demandas[rota_b[j] - 1] << endl;
+                            // cout << "Tentou trocar: " << rota_a[i]<<" com: " << rota_b[j]<< endl;
+
                             custo = custos[rota_a[i-1]][rota_b[j]] + custos[rota_b[j]][rota_a[i+1]] + custos[rota_b[j-1]][rota_a[i]] + custos[rota_a[i]][rota_b[j+1]] - custos[rota_a[i-1]][rota_a[i]] - custos[rota_a[i]][rota_a[i+1]] - custos[rota_b[j-1]][rota_b[j]] - custos[rota_b[j]][rota_b[j+1]];
 
                             if(custo < m_custo){
@@ -334,6 +334,7 @@ x_swap melhorSwapEntreRotas(vector<vector<int>> rotas, vector<vector<int>> custo
                                 cout << "m_v_a: " << m_v_a << endl;
                                 cout << "m_v_b: " << m_v_b << endl;
                                 cout << "m_i: " << m_i << endl;
+                                cout << "m_j: " << m_j << endl;
                                 cout << "m_custo: " << m_custo << endl;
                                 cout << "Swap é entre: " << rotas[m_v_a][m_i] << " e " << rotas[m_v_b][m_j] << endl;
                                 cout << "------------------------------------------" << endl;
@@ -406,11 +407,12 @@ t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector
 
 }
 
-Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, int nEntregas){
+Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, int nEntregas, vector<int> demandas , vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int custoVeiculo){
     int k = 1;
     Solucao solucaoVizinha = solucaoAtual;
     t_swap melhorSwap;
-    x_swap melhorSwapEntreRotas;
+    x_swap melhorSwapRotas;
+    t_terceirizado melhorInsert;
 
     while (k <= nVizinhancas){
         switch (k){
@@ -428,19 +430,31 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
 
             break;
-        // case 2:
-        //     //melhorSwapEntreRotas = melhorSwapEntreRotas(solucaoVizinha.rotas, custos, solucaoVizinha.demandas, solucaoVizinha.capacidadeVeiculo, solucaoVizinha.custoVeiculo);
-        //     if (melhorSwapEntreRotas.m_custo < 0){
-        //         // int aux = solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_a][melhorSwapEntreRotas.m_i];
-        //         // solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_a][melhorSwapEntreRotas.m_i] = solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_b][melhorSwapEntreRotas.m_j];
-        //         // solucaoVizinha.rotas[melhorSwapEntreRotas.m_v_b][melhorSwapEntreRotas.m_j] = aux;
-        //         // solucaoVizinha.custoRotas += melhorSwapEntreRotas.m_custo;
-        //         // solucaoVizinha.custoTotal += melhorSwapEntreRotas.m_custo;
-        //         // k = 1;
-        //     }else{
-        //         k++;
-        //     }
-        //     break;
+        case 2: //Vizinhaça 2: Swap entre rotas
+            melhorSwapRotas = melhorSwapEntreRotas(solucaoVizinha.rotas, custos, demandas, capacidadeVeiculo);
+            if (melhorSwapRotas.m_custo < 0){
+                int aux = solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i];
+                solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] = solucaoAtual.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j];
+                solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] = aux;
+                solucaoVizinha.custoRotas += melhorSwapRotas.m_custo;
+                solucaoVizinha.custoTotal += melhorSwapRotas.m_custo;
+                k = 1;
+            }else{
+                k++;
+            }
+            break;
+        case 3:
+            melhorInsert = melhorInsertTerceirizado(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
+            if (melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter < 0){
+                solucaoVizinha.rotas[melhorInsert.m_v].insert(solucaoVizinha.rotas[melhorInsert.m_v].begin()+melhorInsert.m_i, solucaoVizinha.terceirizados[melhorInsert.m_ter]);
+                solucaoVizinha.terceirizados.erase(solucaoVizinha.terceirizados.begin()+melhorInsert.m_ter);
+                solucaoVizinha.custoRotas += melhorInsert.m_custo_rotas;
+                solucaoVizinha.custoTerceirizacao += melhorInsert.m_custo_ter;
+                solucaoVizinha.custoTotal += melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter;
+                k = 1;
+            }else{
+                k++;
+            }
         default:
 
             break;
@@ -453,13 +467,15 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
 
 int main() {
        
-    string arquivoDeEntrada = "instancias/n9k5_A.txt";
+    string arquivoDeEntrada = "instancias/n64k9_B.txt";
     Instancia instancia(arquivoDeEntrada);
 
     //instancia.imprimirDados();
 
     Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
     
+    cout << "#################GULOSO################" << endl;
+
     imprimirSolucao(solucaoGulosa);
 
     cout << "######################################" << endl;
@@ -468,13 +484,14 @@ int main() {
 
     x_swap melhorSwap;
 
-    melhorSwap = melhorSwapEntreRotas(solucaoGulosa.rotas, instancia.custo, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo);
+    // melhorSwap = melhorSwapEntreRotas(solucaoGulosa.rotas, instancia.custo, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo);
 
-    cout << "######################################" << endl;
-    cout << "m_v_a: " << melhorSwap.m_v_a << endl;
-    cout << "m_v_b: " << melhorSwap.m_v_b << endl;
-    cout << "m_i: " << melhorSwap.m_i << endl;
-    cout << "m_custo: " << melhorSwap.m_custo << endl;
+    // cout << "######################################" << endl;
+    // cout << "m_v_a: " << melhorSwap.m_v_a << endl;
+    // cout << "m_v_b: " << melhorSwap.m_v_b << endl;
+    // cout << "m_i: " << melhorSwap.m_i << endl;
+    // cout << "m_j: " << melhorSwap.m_j << endl;
+    // cout << "m_custo: " << melhorSwap.m_custo << endl;
 
     // melhorInsert = melhorInsertTerceirizado(solucaoGulosa.rotas, instancia.custo, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.nEntregas, instancia.custoVeiculo);
 
@@ -485,15 +502,17 @@ int main() {
     // cout << "m_custo_rotas: " << melhorInsert.m_custo_rotas << endl;
     // cout << "m_custo_ter: " << melhorInsert.m_custo_ter << endl;
 
-    //Solucao solucaoVizinha = VND(solucaoGulosa, 1, instancia.custo, instancia.nEntregas);
+    //Solucao solucaoVizinha = VND(solucaoGulosa, 2, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo, instancia.custosTerceirizacao);
     
+    Solucao solucaoVizinha = VND(solucaoGulosa, 3, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
 
-    imprimirSolucao(solucaoGulosa);
+    cout << "################VIZINHO################" << endl;
+    imprimirSolucao(solucaoVizinha);
+    cout << "#######################################" << endl;
+
 
     /*t_swap melhorSwap;
-    cout << "######################################" << endl;
     melhorSwap = melhorSwapIntraRota(solucaoGulosa.rotas, instancia.custo, instancia.nEntregas);
-    cout << "######################################" << endl;
     cout << "m_v: " << melhorSwap.m_v << endl;
     cout << "m_i: " << melhorSwap.m_i << endl;
     cout << "m_j: " << melhorSwap.m_j << endl;
