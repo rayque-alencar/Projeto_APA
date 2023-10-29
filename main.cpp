@@ -508,9 +508,10 @@ t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector
 
 }
 
-Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, int nEntregas, vector<int> demandas , vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int custoVeiculo){
+Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, int nEntregas, vector<int> demandas , vector<int> custoTerceirizacao, int capacidadeVeiculo, int custoVeiculo){
     int k = 1;
     Solucao solucaoVizinha = solucaoAtual;
+    vector<int> terceirizados = solucaoVizinha.terceirizados;
     t_swap melhorSwap;
     x_swap melhorSwapRotas;
     t_terceirizado melhorInsert;
@@ -618,7 +619,7 @@ int main() {
 
     srand(time(NULL));
        
-    string arquivoDeEntrada = "instancias/n31k5_D.txt";
+    string arquivoDeEntrada = "instancias/n43k6_D.txt";
     Instancia instancia(arquivoDeEntrada);
 
     /*Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
@@ -640,7 +641,7 @@ int main() {
     cout << "----------------GULOSA---------------------" << endl;
     imprimirSolucao(solucaoGulosa);
     cout << "------------------------------------------" << endl;
-    Solucao solucaoVizinha = VND(solucaoGulosa, 4, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
+    Solucao solucaoVizinha = VND(solucaoGulosa, 4, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
     cout << "--------------VIZINHANCA------------------" << endl;
     imprimirSolucao(solucaoVizinha);
     cout << "------------------------------------------" << endl;
@@ -648,7 +649,7 @@ int main() {
     while (iterILS)
     {
         Solucao solucaoPerturbada = perturbacao(solucaoOtima, instancia.custo);
-        solucaoVizinha = VND(solucaoPerturbada, 4, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoPerturbada.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
+        solucaoVizinha = VND(solucaoPerturbada, 4, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
         if (solucaoVizinha.custoTotal < solucaoOtima.custoTotal){
             cout << "Melhorou a solução" << endl;
             solucaoOtima = solucaoVizinha;
