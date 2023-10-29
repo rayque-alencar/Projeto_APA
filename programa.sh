@@ -80,7 +80,7 @@ do
     arquivoDeEntrada="instancias/${instancias[$i]}"
     valorInstancia="${valores[$i]}"
 
-  echo "Executando $arquivoDeEntrada com melhor valor  $valorInstancia"
+  #echo "Executando $arquivoDeEntrada com melhor valor  $valorInstancia"
   ./programa "$arquivoDeEntrada" "$valorInstancia"
 done
 

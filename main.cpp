@@ -617,6 +617,13 @@ Solucao perturbacao(Solucao solAtual, vector<vector<int>> custos){
 
 int main(int argc, char *argv[]) {
 
+    clock_t otimo_s;
+    clock_t otimo_e;
+    clock_t gulosa_s;
+    clock_t gulosa_e;
+    clock_t vizinho_s;
+    clock_t vizinho_e;
+
     // Verifique se o número de argumentos está correto
     if (argc != 3) {
         cerr << "Uso: " << argv[0] << " <arquivo_de_instancia> <valor_solucao_otima>" << endl;
@@ -643,15 +650,19 @@ int main(int argc, char *argv[]) {
     }else{
         iterILS = instancia.nEntregas/2;
     }
-    
+    gulosa_s = clock();
     Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
-    cout << "----------------GULOSA---------------------" << endl;
+    gulosa_e = clock();
+    /*cout << "----------------GULOSA---------------------" << endl;
     imprimirSolucao(solucaoGulosa);
-    cout << "------------------------------------------" << endl;
+    cout << "------------------------------------------" << endl;*/
+    vizinho_s = clock();
     Solucao solucaoVizinha = VND(solucaoGulosa, 4, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
-    cout << "--------------VIZINHANCA------------------" << endl;
+    vizinho_e = clock();
+    /*cout << "--------------VIZINHANCA------------------" << endl;
     imprimirSolucao(solucaoVizinha);
-    cout << "------------------------------------------" << endl;
+    cout << "------------------------------------------" << endl;*/
+    otimo_s = clock();
     Solucao solucaoOtima = solucaoVizinha;
     while (iterILS)
     {
@@ -663,10 +674,11 @@ int main(int argc, char *argv[]) {
         }
         iterILS--;
     }
+    otimo_e = clock();
 
-    cout << "-----------------OTIMA--------------------" << endl;
+    /*cout << "-----------------OTIMA--------------------" << endl;
     imprimirSolucao(solucaoOtima);
-    cout << "------------------------------------------" << endl;
+    cout << "------------------------------------------" << endl;*/
 
     /*Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
     imprimirSolucao(solucaoGulosa);
@@ -674,23 +686,26 @@ int main(int argc, char *argv[]) {
     Solucao solucaoPerturbada = perturbacao(solucaoGulosa, instancia.custo);
     imprimirSolucao(solucaoPerturbada);*/
 
-    float gap = ((solucaoOtima.custoTotal - valorSolucaoOtima)/valorSolucaoOtima)*100;
-    cout << "gap: " << gap << endl;
-
-    cout << "-----------------Check------------------" << endl;
+    float gap_otima = ((solucaoOtima.custoTotal - valorSolucaoOtima)/valorSolucaoOtima)*100;
+    float gap_gulosa = ((solucaoGulosa.custoTotal - valorSolucaoOtima)/valorSolucaoOtima)*100;
+    float gap_vizinha = ((solucaoVizinha.custoTotal - valorSolucaoOtima)/valorSolucaoOtima)*100;
+    cout << "\ngap_gulosa: " << gap_gulosa << " gap_vizinha: " << gap_vizinha << " gap_otima: " << gap_otima << endl;
+    cout << "custo gulosa: " << solucaoGulosa.custoTotal << " custo vizinho: " << solucaoVizinha.custoTotal << " custo otimo: " << solucaoOtima.custoTotal << endl;
+    cout << "tempo gulosa: " << (gulosa_e - gulosa_s)/double(CLOCKS_PER_SEC) << " tempo vizinho: " << (vizinho_e - vizinho_s)/double(CLOCKS_PER_SEC) << " tempo otimo: " << (otimo_e - otimo_s)/double(CLOCKS_PER_SEC) << endl;
+    /*cout << "-----------------Check------------------" << endl;
     int custo_rotas = custoRotas(solucaoOtima.rotas, instancia.custo);
     int custo_terceirizacao = custoTerceirizacao(solucaoOtima.terceirizados, instancia.custosTerceirizacao);
     int custo_veiculo = custoVeiculos(instancia.custoVeiculo, solucaoOtima.rotas);
     cout << "custo total: " << custo_rotas + custo_terceirizacao + custo_veiculo << endl;
     cout << "custo das rotas: " << custo_rotas << endl;
     cout << "custo do veiculo: " << custo_veiculo << endl;
-    cout << "custo da terceirizacao: " << custo_terceirizacao << endl;
+    cout << "custo da terceirizacao: " << custo_terceirizacao << endl;*/
 
-    vector<int> capacidadeRotas = calculaCapacidadeRota(instancia.demandas, solucaoOtima.rotas);
+    /*vector<int> capacidadeRotas = calculaCapacidadeRota(instancia.demandas, solucaoOtima.rotas);
     for (int i = 0; i < int(solucaoOtima.rotas.size()); i++)
     {
         cout<< "Rota " << i+1 << " capacidade: " << capacidadeRotas[i] << endl;
-    }
+    }*/
 
 
     string nomeArquivo = arquivoDeEntrada.substr(arquivoDeEntrada.find_last_of('/') + 1); // Remove o caminho do arquivo de entrada
