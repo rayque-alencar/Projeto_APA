@@ -301,7 +301,7 @@ t_swap melhorSwapIntraRota(vector<vector<int>> rotas, vector<vector<int>> custos
 
     return melhorSwap;
 }
-
+// função que calcula o melhor swap entre rotas
 x_swap melhorSwapInterRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, int capacidadeVeiculo){
     int m_v_a = 0, m_v_b = 0, m_i = 0,m_j = 0, m_custo = 9999999, custo;
     x_swap melhorSwap;
@@ -343,7 +343,7 @@ x_swap melhorSwapInterRotas(vector<vector<int>> rotas, vector<vector<int>> custo
 
     return melhorSwap;
 }
-
+// função que calcula a melhor terceirização de uma entrega
 i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int minEntrega, int custoVeiculo){
     int m_v = 0, m_i = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999, m_custo_veiculo = 0;
 
