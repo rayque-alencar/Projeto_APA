@@ -522,7 +522,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
         case 1: //Vizinhaça 1: Swap Intra Rota
             melhorSwap = melhorSwapIntraRota(solucaoVizinha.rotas, custos, nEntregas);
             if (melhorSwap.m_custo < 0){
-                cout << "SWAP_INTRA_ROTAS Custo: " << melhorSwap.m_custo << endl;
+                //cout << "SWAP_INTRA_ROTAS Custo: " << melhorSwap.m_custo << endl;
                 int aux = solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i];
                 solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i] = solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_j];
                 solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_j] = aux;
@@ -536,7 +536,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
         case 2: //Vizinhaça 2: Swap entre rotas
             melhorSwapRotas = melhorSwapInterRotas(solucaoVizinha.rotas, custos, demandas, capacidadeVeiculo);
             if (melhorSwapRotas.m_custo < 0){
-                cout << "SWAP_ENTRE_ROTAS V1: " << melhorSwapRotas.m_v_a << " C1: " << solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] << " V2: " << melhorSwapRotas.m_v_b << " C2: " <<  solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] << " Custo: " << melhorSwapRotas.m_custo << endl;
+                //cout << "SWAP_ENTRE_ROTAS V1: " << melhorSwapRotas.m_v_a << " C1: " << solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] << " V2: " << melhorSwapRotas.m_v_b << " C2: " <<  solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] << " Custo: " << melhorSwapRotas.m_custo << endl;
                 int aux = solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i];
                 solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] = solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j];
                 solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] = aux;
@@ -550,7 +550,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
         case 3: //Vizinhaça 3: Insert de um terceirizado em uma rota
             melhorInsert = melhorInsertTerceirizado(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
             if (melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter + melhorInsert.m_custo_veiculo < 0){
-                cout << "INSERT_TERCEIRIZADO Custo: " << melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter + melhorInsert.m_custo_veiculo << endl;
+                //cout << "INSERT_TERCEIRIZADO Custo: " << melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter + melhorInsert.m_custo_veiculo << endl;
                 solucaoVizinha.rotas[melhorInsert.m_v].insert(solucaoVizinha.rotas[melhorInsert.m_v].begin()+melhorInsert.m_i, solucaoVizinha.terceirizados[melhorInsert.m_ter]);
                 solucaoVizinha.terceirizados.erase(solucaoVizinha.terceirizados.begin()+melhorInsert.m_ter);
                 solucaoVizinha.custoRotas += melhorInsert.m_custo_rotas;
@@ -565,7 +565,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
         case 4: 
             melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
             if (melhorTer.m_custo_rotas + melhorTer.m_custo_ter + melhorTer.m_custo_veiculo < 0){
-                cout << "TERCEIRIZA Custo: " << melhorTer.m_custo_rotas + melhorTer.m_custo_ter + melhorTer.m_custo_veiculo << endl;
+                //cout << "TERCEIRIZA Custo: " << melhorTer.m_custo_rotas + melhorTer.m_custo_ter + melhorTer.m_custo_veiculo << endl;
                 //remove da rota e adiciona na lista de terceirizados
                 solucaoVizinha.terceirizados.push_back(solucaoVizinha.rotas[melhorTer.m_v][melhorTer.m_i]);
                 solucaoVizinha.rotas[melhorTer.m_v].erase(solucaoVizinha.rotas[melhorTer.m_v].begin()+melhorTer.m_i);
@@ -658,7 +658,7 @@ int main(int argc, char *argv[]) {
         Solucao solucaoPerturbada = perturbacao(solucaoOtima, instancia.custo);
         solucaoVizinha = VND(solucaoPerturbada, 4, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
         if (solucaoVizinha.custoTotal < solucaoOtima.custoTotal){
-            cout << "Melhorou a solução" << endl;
+            //cout << "Melhorou a solução" << endl;
             solucaoOtima = solucaoVizinha;
         }
         iterILS--;
