@@ -1,5 +1,13 @@
 #include "Instancia.hpp"
 #include "Solucao.hpp"
+#include <time.h>
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <stdlib.h>
+#include <stdio.h>
+#include <cmath>
 
 typedef struct
 {
@@ -38,6 +46,13 @@ typedef struct
     int m_custo_ter = 9999999;
 
 }i_terceirizado;
+
+typedef struct
+{
+    int m_v = 0; // indice do melhor carro
+    int m_custo_rotas = 9999999;
+    int m_custo_ter = 9999999;
+}t_excluirotas;
 
 //funçãao que calcula o custo das rotas
 int custoRotas(vector<vector<int>> rotas, vector<vector<int>> custo){
@@ -104,13 +119,13 @@ Solucao guloso(int nVeiculos, int nEntregas, int capacidadeVeiculo, int minEntre
                 int custoArco;
 
         
-                /*if (rotas[v].back() == 0){
+                if (rotas[v].back() == 0){
                     custoArco = custo[rotas[v].back()][candidatos[i]]+custoVeiculo;
                 }else{
                     custoArco = custo[rotas[v].back()][candidatos[i]];
-                }*/
+                }
 
-                custoArco = custo[rotas[v].back()][candidatos[i]];
+                //custoArco = custo[rotas[v].back()][candidatos[i]];
 
                 //verifica se o candidato é melhor que o melhor candidato atual e se o veiculo tem capacidade para atender o candidato
                 if (custoArco < melhorCusto && pesos[v] + demandas[candidatos[i]-1] <= capacidadeVeiculo){
@@ -375,7 +390,7 @@ int calculaQuantidadeEntregas(vector<vector<int>> rotas){
 }
 
 i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int nEntregas, int custoVeiculo){
-    int m_v = 0, m_i = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999, custo_rotas, custo_ter;
+    int m_v = 0, m_i = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999;
 
     i_terceirizado melhorTerceirizacao;
 
@@ -386,6 +401,8 @@ i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>
         int tam_rota = int(rota.size());
         for (int i = 1; i < tam_rota - 1; i++){
             if ( quantidadeEntregas - 1 < nEntregas){
+                int custo_rotas = 0, custo_ter = 0;
+
                 if (tam_rota > 3) {
                     custo_rotas = custos[rota[i-1]][rota[i+1]] - custos[rota[i-1]][rota[i]] - custos[rota[i]][rota[i+1]];
                 }else if ( tam_rota == 3 ) {
@@ -398,12 +415,12 @@ i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>
                     m_i = i;
                     m_custo_rotas = custo_rotas;
                     m_custo_ter = custo_ter;
-                    cout << "#########################################" << endl;
+                    /*cout << "#########################################" << endl;
                     cout << "custo_rotas: " << m_custo_rotas << endl;
                     cout << "custo_ter: " << m_custo_ter << endl;
                     cout << "m_v: " << m_v << endl;
                     cout << "m_i: " << m_i << endl;
-                    cout << "#########################################" << endl;
+                    cout << "#########################################" << endl;*/
 
                 }
         }
@@ -416,13 +433,20 @@ i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>
     melhorTerceirizacao.m_custo_rotas = m_custo_rotas;
     melhorTerceirizacao.m_custo_ter = m_custo_ter;
 
-    cout << "O melhor terceirizado é: " << rotas[m_v][m_i] << " com custo: " << m_custo_rotas + m_custo_ter << endl;
+    //cout << "O melhor terceirizado é: " << rotas[m_v][m_i] << " com custo: " << m_custo_rotas + m_custo_ter << endl;
     
     return melhorTerceirizacao;
 
 }
 
+/*t_excluirotas melhorExcluiRotas(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int nEntregas, int custoVeiculo){
+    int m_v = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999;
 
+    t_excluirotas melhorExcluiRotas;
+
+    int quantidadeEntregas = calculaQuantidadeEntregas(rotas);
+
+}*/
 //função que calcula o melhor insert de um terceirizado em uma rotas
 t_terceirizado melhorInsertTerceirizado(vector<vector<int>> rotas, vector<vector<int>> custos, vector<int> demandas, vector<int> terceirizados, vector<int> custoTerceirizacao, int capacidadeVeiculo, int nEntregas, int custoVeiculo){
     int m_v = 0, m_i = 0, m_ter = 0, m_custo_rotas = 9999999, m_custo_ter = 9999999, custo_rotas, custo_ter;
@@ -488,8 +512,9 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
         case 1: //Vizinhaça 1: Swap Intra Rota
             melhorSwap = melhorSwapIntraRota(solucaoVizinha.rotas, custos, nEntregas);
             if (melhorSwap.m_custo < 0){
+                cout << "SWAP_INTRA_ROTAS" << endl;
                 int aux = solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i];
-                solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i] = solucaoAtual.rotas[melhorSwap.m_v][melhorSwap.m_j];
+                solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_i] = solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_j];
                 solucaoVizinha.rotas[melhorSwap.m_v][melhorSwap.m_j] = aux;
                 solucaoVizinha.custoRotas += melhorSwap.m_custo;
                 solucaoVizinha.custoTotal += melhorSwap.m_custo;
@@ -499,11 +524,12 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
 
             break;
-        case 2: //Vizinhaça 2: Swap entre rotas
+        /*case 2: //Vizinhaça 2: Swap entre rotas
             melhorSwapRotas = melhorSwapInterRotas(solucaoVizinha.rotas, custos, demandas, capacidadeVeiculo);
             if (melhorSwapRotas.m_custo < 0){
+                cout << "SWAP_ENTRE_ROTAS V1: " << melhorSwapRotas.m_v_a << " C1: " << solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] << " V2: " << melhorSwapRotas.m_v_b << " C2: " <<  solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] << " Custo: " << melhorSwapRotas.m_custo << endl;
                 int aux = solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i];
-                solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] = solucaoAtual.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j];
+                solucaoVizinha.rotas[melhorSwapRotas.m_v_a][melhorSwapRotas.m_i] = solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j];
                 solucaoVizinha.rotas[melhorSwapRotas.m_v_b][melhorSwapRotas.m_j] = aux;
                 solucaoVizinha.custoRotas += melhorSwapRotas.m_custo;
                 solucaoVizinha.custoTotal += melhorSwapRotas.m_custo;
@@ -511,10 +537,11 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }else{
                 k++;
             }
-            break;
-        case 3:
+            break;*/
+        case 3: //Vizinhaça 3: Insert de um terceirizado em uma rota
             melhorInsert = melhorInsertTerceirizado(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
             if (melhorInsert.m_custo_rotas + melhorInsert.m_custo_ter < 0){
+                cout << "INSERT_TERCEIRIZADO" << endl;
                 solucaoVizinha.rotas[melhorInsert.m_v].insert(solucaoVizinha.rotas[melhorInsert.m_v].begin()+melhorInsert.m_i, solucaoVizinha.terceirizados[melhorInsert.m_ter]);
                 solucaoVizinha.terceirizados.erase(solucaoVizinha.terceirizados.begin()+melhorInsert.m_ter);
                 solucaoVizinha.custoRotas += melhorInsert.m_custo_rotas;
@@ -526,9 +553,9 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
             break;
         case 4: 
-            cout << "to aqui" << endl;
             melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
             if (melhorTer.m_custo_rotas + melhorTer.m_custo_ter < 0){
+                cout << "TERCEIRIZA" << endl;
                 //remove da rota e adiciona na lista de terceirizados
                 solucaoVizinha.terceirizados.push_back(solucaoVizinha.rotas[melhorTer.m_v][melhorTer.m_i]);
                 solucaoVizinha.rotas[melhorTer.m_v].erase(solucaoVizinha.rotas[melhorTer.m_v].begin()+melhorTer.m_i);
@@ -549,72 +576,87 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
     return solucaoVizinha;
 }
 
-Solucao perturbacao(Solucao solAtual, vector<int> terceirizados, vector<int> demandas, vector<int> custoTerceirizacao, int capacidadeVeiculo, int custoVeiculo){
-
+Solucao perturbacao(Solucao solAtual, vector<vector<int>> custos){
+    Solucao solucaoPerturbada = solAtual;
+    int num;
+    for(int v = 0; v < int(solucaoPerturbada.rotas.size()); v++){
+        vector<int> rota = solucaoPerturbada.rotas[v];
+        rota.erase(rota.begin());
+        rota.pop_back();
+        int tam_rota = int(rota.size());
+        if (tam_rota > 1){
+            num = ceil(rand() % (tam_rota/2) + 1);
+            //cout << "num: " << num << endl;
+            for(int i = 0; i < num; i++){
+                rota.push_back(rota[0]);
+                rota.erase(rota.begin());
+            }
+            //Recalcula o custo da rota
+            int deltaCustoRota = custos[solAtual.rotas[v][0]][solAtual.rotas[v][num+1]] + custos[solAtual.rotas[v][num]][solAtual.rotas[v][0]] + custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][0]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][0]] - custos[solAtual.rotas[v][num]][solAtual.rotas[v][num+1]];
+            //cout << "Trocou... deltaCustoRota: " << deltaCustoRota << endl;
+            solucaoPerturbada.custoRotas += deltaCustoRota;
+            solucaoPerturbada.custoTotal += deltaCustoRota;
+        }
+        rota.insert(rota.begin(), 0);
+        rota.push_back(0);
+        solucaoPerturbada.rotas[v] = rota;
+    }
+    return solucaoPerturbada;
 }
 
 int main() {
+
+    srand(time(NULL));
        
-    string arquivoDeEntrada = "instancias/n31k5_B.txt";
+    string arquivoDeEntrada = "instancias/n199k17_A.txt";
     Instancia instancia(arquivoDeEntrada);
 
-    //instancia.imprimirDados();
-
-    Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
-    
-    cout << "#################GULOSO################" << endl;
+    /*Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
+    Solucao solucaoPerturbada = perturbacao(solucaoGulosa, instancia.custo);
 
     imprimirSolucao(solucaoGulosa);
-
-    cout << "######################################" << endl;
-
-    i_terceirizado melhorTer;
-
-    // melhorTer = melhorTerceirizacao(solucaoGulosa.rotas, instancia.custo, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.nEntregas, instancia.custoVeiculo);
-
-    // cout << "######################################" << endl;
-    // cout << "m_v: " << melhorTer.m_v << endl;
-    // cout << "m_i: " << melhorTer.m_i << endl;
-    // cout << "m_custo_rotas: " << melhorTer.m_custo_rotas << endl;
-    // cout << "m_custo_ter: " << melhorTer.m_custo_ter << endl;
+    cout << "------------------------------------------" << endl;
+    imprimirSolucao(solucaoPerturbada);*/
     
-    // t_terceirizado melhorInsert;
-
-    // x_swap melhorSwap;
-
-    // melhorSwap = melhorSwapInterRotas(solucaoGulosa.rotas, instancia.custo, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo);
-
-    // cout << "######################################" << endl;
-    // cout << "m_v_a: " << melhorSwap.m_v_a << endl;
-    // cout << "m_v_b: " << melhorSwap.m_v_b << endl;
-    // cout << "m_i: " << melhorSwap.m_i << endl;
-    // cout << "m_j: " << melhorSwap.m_j << endl;
-    // cout << "m_custo: " << melhorSwap.m_custo << endl;
-
-    // melhorInsert = melhorInsertTerceirizado(solucaoGulosa.rotas, instancia.custo, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.nEntregas, instancia.custoVeiculo);
-
-    // cout << "######################################" << endl;
-    // cout << "m_v: " << melhorInsert.m_v << endl;
-    // cout << "m_i: " << melhorInsert.m_i << endl;
-    // cout << "m_ter: " << melhorInsert.m_ter << endl;
-    // cout << "m_custo_rotas: " << melhorInsert.m_custo_rotas << endl;
-    // cout << "m_custo_ter: " << melhorInsert.m_custo_ter << endl;
-
-    //Solucao solucaoVizinha = VND(solucaoGulosa, 2, instancia.custo, instancia.nEntregas, instancia.demandas, instancia.capacidadeVeiculo, instancia.custoVeiculo, instancia.custosTerceirizacao);
+    // ILS
+    int iterILS;
+    if (instancia.nEntregas < 100){
+        iterILS = 100;
+    }else{
+        iterILS = instancia.nEntregas/2;
+    }
     
-    Solucao solucaoVizinha = VND(solucaoGulosa, 4, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
-
-    cout << "################VIZINHO################" << endl;
+    Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
+    cout << "----------------GULOSA---------------------" << endl;
+    imprimirSolucao(solucaoGulosa);
+    cout << "------------------------------------------" << endl;
+    Solucao solucaoVizinha = VND(solucaoGulosa, 1, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoGulosa.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
+    cout << "--------------VIZINHANCA------------------" << endl;
     imprimirSolucao(solucaoVizinha);
-    cout << "#######################################" << endl;
+    cout << "------------------------------------------" << endl;
+    Solucao solucaoOtima = solucaoVizinha;
+    while (iterILS)
+    {
+        Solucao solucaoPerturbada = perturbacao(solucaoOtima, instancia.custo);
+        solucaoVizinha = VND(solucaoPerturbada, 1, instancia.custo, instancia.nEntregas, instancia.demandas, solucaoPerturbada.terceirizados, instancia.custosTerceirizacao, instancia.capacidadeVeiculo, instancia.custoVeiculo);
+        if (solucaoVizinha.custoTotal < solucaoOtima.custoTotal){
+            cout << "Melhorou a solução" << endl;
+            solucaoOtima = solucaoVizinha;
+        }
+        iterILS--;
+    }
+
+    cout << "-----------------OTIMA--------------------" << endl;
+    imprimirSolucao(solucaoOtima);
+    cout << "------------------------------------------" << endl;
+
+    /*Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
+    imprimirSolucao(solucaoGulosa);
+    cout << "------------------------------------------" << endl;
+    Solucao solucaoPerturbada = perturbacao(solucaoGulosa, instancia.custo);
+    imprimirSolucao(solucaoPerturbada);*/
 
 
-    /*t_swap melhorSwap;
-    melhorSwap = melhorSwapIntraRota(solucaoGulosa.rotas, instancia.custo, instancia.nEntregas);
-    cout << "m_v: " << melhorSwap.m_v << endl;
-    cout << "m_i: " << melhorSwap.m_i << endl;
-    cout << "m_j: " << melhorSwap.m_j << endl;
-    cout << "m_custo: " << melhorSwap.m_custo << endl;*/
 
     string nomeArquivo = arquivoDeEntrada.substr(arquivoDeEntrada.find_last_of('/') + 1); // Remove o caminho do arquivo de entrada
     string ArquivoSaida = "instanciasSolucoes/" + nomeArquivo.substr(0, nomeArquivo.find_last_of('.')) + "_solucao.txt"; // Remove a extensão do arquivo de entrada e adiciona a extensão .solucao.txt
