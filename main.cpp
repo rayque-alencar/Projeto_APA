@@ -356,7 +356,7 @@ i_terceirizado melhorTerceirizacao(vector<vector<int>> rotas, vector<vector<int>
         int tam_rota = int(rota.size());
         for (int i = 1; i < tam_rota - 1; i++){\
             // Checa se atende a demanda minima de entregas
-            if ( quantidadeEntregas - 1 < minEntrega){
+            if ( quantidadeEntregas - 1 > minEntrega){
                 int custo_rotas = 0, custo_ter = 0, custo_veiculo = 0;
 
                 if (tam_rota > 3) {
@@ -491,7 +491,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
             break;
         case 4: //Vizinhaça 4: Terceirização de uma entrega
-            melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
+            melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, minEntrega, custoVeiculo);
             if (melhorTer.m_custo_rotas + melhorTer.m_custo_ter + melhorTer.m_custo_veiculo < 0){
                 //Faz a melhor terceirização
                 solucaoVizinha.terceirizados.push_back(solucaoVizinha.rotas[melhorTer.m_v][melhorTer.m_i]);
