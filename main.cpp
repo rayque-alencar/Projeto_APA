@@ -615,11 +615,18 @@ Solucao perturbacao(Solucao solAtual, vector<vector<int>> custos){
     return solucaoPerturbada;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    // Verifique se o número de argumentos está correto
+    if (argc != 3) {
+        cerr << "Uso: " << argv[0] << " <arquivo_de_instancia> <valor_solucao_otima>" << endl;
+        return 1;
+    }
 
     srand(time(NULL));
        
-    string arquivoDeEntrada = "instancias/n43k6_D.txt";
+    string arquivoDeEntrada = argv[1];
+    float valorSolucaoOtima = atof(argv[2]);
     Instancia instancia(arquivoDeEntrada);
 
     /*Solucao solucaoGulosa = guloso(instancia.nVeiculos, instancia.nEntregas, instancia.capacidadeVeiculo, instancia.minEntregas, instancia.custoVeiculo, instancia.demandas, instancia.custo, instancia.custosTerceirizacao);
@@ -666,6 +673,10 @@ int main() {
     cout << "------------------------------------------" << endl;
     Solucao solucaoPerturbada = perturbacao(solucaoGulosa, instancia.custo);
     imprimirSolucao(solucaoPerturbada);*/
+
+    float gap = ((solucaoOtima.custoTotal - valorSolucaoOtima)/valorSolucaoOtima)*100;
+    cout << "gap: " << gap << endl;
+
     cout << "-----------------Check------------------" << endl;
     int custo_rotas = custoRotas(solucaoOtima.rotas, instancia.custo);
     int custo_terceirizacao = custoTerceirizacao(solucaoOtima.terceirizados, instancia.custosTerceirizacao);
@@ -680,9 +691,6 @@ int main() {
     {
         cout<< "Rota " << i+1 << " capacidade: " << capacidadeRotas[i] << endl;
     }
-    
-
-
 
 
     string nomeArquivo = arquivoDeEntrada.substr(arquivoDeEntrada.find_last_of('/') + 1); // Remove o caminho do arquivo de entrada
@@ -696,7 +704,9 @@ int main() {
     }
 
     salvarSolucaoEmArquivo(solucaoGulosa, arquivoSaida);
-    arquivoSaida.close(); 
+    arquivoSaida.close();
+
+
 
     return 0;
 }
