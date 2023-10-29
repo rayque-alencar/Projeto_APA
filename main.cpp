@@ -517,7 +517,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
 Solucao perturbacao(Solucao solAtual, vector<vector<int>> custos){
     Solucao solucaoPerturbada = solAtual;
     int num;
-    // Faz uma perturbaçao ou nao em cada rota da solucao
+    // Faz uma perturbaçao em cada rota da solucao
     for(int v = 0; v < int(solucaoPerturbada.rotas.size()); v++){
         vector<int> rota = solucaoPerturbada.rotas[v];
         rota.erase(rota.begin());
@@ -569,9 +569,9 @@ int main(int argc, char *argv[]) {
     // Define o numero de iteracoes do ILS
     int iterILS;
     if (instancia.nEntregas < 100){
-        iterILS = 100;
+        iterILS = 50;
     }else{
-        iterILS = instancia.nEntregas/2;
+        iterILS = int(instancia.nEntregas/2);
     }
     //Faz a solucao gulosa e contabiliza o tempo
     gulosa_s = clock();
