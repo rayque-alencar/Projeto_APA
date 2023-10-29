@@ -61,6 +61,7 @@
     "iosfwd": "cpp",
     "algorithm": "cpp",
     "string": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "cmath": "cpp"
   }
 }
