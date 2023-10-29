@@ -491,7 +491,7 @@ Solucao VND(Solucao solucaoAtual, int nVizinhancas, vector<vector<int>> custos, 
             }
             break;
         case 4: //Vizinhaça 4: Terceirização de uma entrega
-            melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, minEntrega, custoVeiculo);
+            melhorTer = melhorTerceirizacao(solucaoVizinha.rotas, custos, demandas, solucaoVizinha.terceirizados, custoTerceirizacao, capacidadeVeiculo, nEntregas, custoVeiculo);
             if (melhorTer.m_custo_rotas + melhorTer.m_custo_ter + melhorTer.m_custo_veiculo < 0){
                 //Faz a melhor terceirização
                 solucaoVizinha.terceirizados.push_back(solucaoVizinha.rotas[melhorTer.m_v][melhorTer.m_i]);
@@ -519,31 +519,26 @@ Solucao perturbacao(Solucao solAtual, vector<vector<int>> custos){
     int num;
     // Faz uma perturbaçao ou nao em cada rota da solucao
     for(int v = 0; v < int(solucaoPerturbada.rotas.size()); v++){
-
-        if (rand() % 2 == 0){
-            vector<int> rota = solucaoPerturbada.rotas[v];
-            rota.erase(rota.begin());
-            rota.pop_back();
-            int tam_rota = int(rota.size());
-            // Checa o tamanho da rota
-            if (tam_rota > 1){
-                num = ceil(rand() % (tam_rota/2) + 1);
-                //Faz o shift, colocando os primeiros num elementos no final da rota
-                for(int i = 0; i < num; i++){
-                    rota.push_back(rota[0]);
-                    rota.erase(rota.begin());
-                }
-                //Recalcula o custo da rota
-                int deltaCustoRota = custos[solAtual.rotas[v][0]][solAtual.rotas[v][num+1]] + custos[solAtual.rotas[v][num]][solAtual.rotas[v][0]] + custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][0]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][0]] - custos[solAtual.rotas[v][num]][solAtual.rotas[v][num+1]];
-                solucaoPerturbada.custoRotas += deltaCustoRota;
-                solucaoPerturbada.custoTotal += deltaCustoRota;
+        vector<int> rota = solucaoPerturbada.rotas[v];
+        rota.erase(rota.begin());
+        rota.pop_back();
+        int tam_rota = int(rota.size());
+        // Checa o tamanho da rota
+        if (tam_rota > 1){
+            num = ceil((tam_rota/2));
+            //Faz o shift, colocando os primeiros num elementos no final da rota
+            for(int i = 0; i < num; i++){
+                rota.push_back(rota[0]);
+                rota.erase(rota.begin());
             }
-            rota.insert(rota.begin(), 0);
-            rota.push_back(0);
-            solucaoPerturbada.rotas[v] = rota;
-        }else{
-            continue;
+            //Recalcula o custo da rota
+            int deltaCustoRota = custos[solAtual.rotas[v][0]][solAtual.rotas[v][num+1]] + custos[solAtual.rotas[v][num]][solAtual.rotas[v][0]] + custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][0]][solAtual.rotas[v][1]] - custos[solAtual.rotas[v][tam_rota+2-2]][solAtual.rotas[v][0]] - custos[solAtual.rotas[v][num]][solAtual.rotas[v][num+1]];
+            solucaoPerturbada.custoRotas += deltaCustoRota;
+            solucaoPerturbada.custoTotal += deltaCustoRota;
         }
+        rota.insert(rota.begin(), 0);
+        rota.push_back(0);
+        solucaoPerturbada.rotas[v] = rota;
     }
     return solucaoPerturbada;
 }
@@ -564,7 +559,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    srand(time(NULL));
     // Leitura da instância
     string arquivoDeEntrada = argv[1];
     float valorSolucaoOtima = atof(argv[2]);
